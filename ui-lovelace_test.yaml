@@ -1,0 +1,202 @@
+title: Home2
+icon: 'mdi:home'
+panel: true
+badges: []
+cards:
+  - type: 'custom:layout-card'
+    layout: vertical
+    max_columns: 4
+    column_width: 200
+    max_width: [33%, 25%, 20%, 22%]     
+    cards:
+      ######################################################################
+      # 1st Column
+      ######################################################################
+      - type: vertical-stack
+        cards:
+
+          # SONOS Media Player ---------------------------------------------
+          # reference: https://github.com/kalkih/mini-media-player
+          - type: custom:mini-media-player
+            name: SONOS
+            entity: media_player.speaker
+            artwork: cover
+            icon: mdi:music
+            source: icon
+            shortcuts:
+              columns: 4
+              buttons:
+                - name: "CBC One"
+                  type: source
+                  id: "CBC Radio One Halifax"
+                - name: "CNN"
+                  type: source
+                  id: "CNN International"
+                - name: "BBC"
+                #- cover: /local/community/_images/radio_bbc.png
+                  type: source
+                  id: "BBC World Service News (World News)"
+                - name: "?"
+                  type: source
+                  id: "BBC World Service News (World News)"
+                - name: "CBC Music"
+                  type: source
+                  id: "CBC Music Halifax"
+                - name: "Q104"
+                  type: source
+                  id: "Q104"
+                - name: "Favorites"
+                  type: source
+                  id: "Favorites"
+                - name: "Dec14"
+                  type: source
+                  id: "Dec14"
+            card_mod:
+              style: |
+                div.mmp-player__adds {
+                margin-left: 0px;
+                }                  
+            
+          # temperature plot -----------------------------------------------
+          - type: vertical-stack
+            cards:
+              - type: 'custom:mini-graph-card'
+                name: Temperature
+                icon: mdi:thermometer
+                height: 150
+                font_size: 75 
+                hours_to_show: 72
+                points_per_hour: 4
+                line_width: 2
+                cache: false
+                show:
+                  labels: false 
+                  labels_secondary: false 
+                entities:
+                  - entity: sensor.temperature_mean
+                    name: <T>                
+                    color: rgba(241,196,15)
+                  - entity: sensor.office_temperature 
+                    name: Office
+                    color: '#e74c3c' 
+                  - entity: sensor.tobis_bedroom_temperature
+                    name: Tobi's Room
+                    color: '#aaffc3'
+                  - entity: sensor.gameroom_temperature
+                    name: Game Room 
+                    color: '#ffd8b1'
+                  - entity: sensor.living_room_temperature
+                    name: Living Room 
+                    color: rgba(106,90,205)
+                  - entity: sensor.laundry_room_temperature
+                    name: Laundry Room
+                    color: rgba(255,255,255)
+                  - entity: binary_sensor.night
+                    color: grey                    
+                    y_axis: secondary
+                    show_state: false
+                    show_legend: false
+                    show_line: false
+                    show_points: false
+                state_map:
+                  - value: 'off'
+                    label: Day
+                  - value: 'on'
+                    label: Night
+
+          # temperature anomaly plot ------------------------------------------
+          - type: vertical-stack
+            cards:
+              - type: 'custom:mini-graph-card'
+                name: Temperature Anomaly
+                icon: mdi:thermometer
+                height: 150
+                font_size: 75
+                hours_to_show: 72 
+                points_per_hour: 4
+                line_width: 2
+                show:
+                  labels: false 
+                  labels_secondary: false 
+                  state: false
+                entities:
+                  - entity: sensor.office_temperature_prime
+                    name: Office
+                    color: '#e74c3c' 
+                  - entity: sensor.tobis_bedroom_temperature_prime
+                    name: Tobi's Room
+                    color: '#aaffc3'
+                  - entity: sensor.gameroom_temperature_prime
+                    name: Game Room 
+                    color: '#ffd8b1'
+                  - entity: sensor.living_room_temperature_prime
+                    name: Living Room 
+                    color: rgba(106,90,205)
+                  - entity: sensor.laundry_room_temperature_prime
+                    name: Laundry Room
+                    color: rgba(255,255,255)
+                  - entity: binary_sensor.night
+                    color: rgba(255,255,255)
+                    y_axis: secondary
+                    show_state: false
+                    show_legend: false
+                    show_line: false
+                    show_points: false
+                state_map:
+                  - value: "off"
+                    label: "Day"
+                  - value: "on"
+                    label: "Night"
+  
+          # relative humidity plot -------------------------------------
+          - type: vertical-stack
+            cards:
+              - type: 'custom:mini-graph-card'
+                name: Relative Humidity
+                icon: mdi:water-percent
+                height: 150
+                font_size: 75
+                hours_to_show: 72 
+                points_per_hour: 4
+                line_width: 2
+                show:
+                  labels: false 
+                  labels_secondary: false 
+                entities:
+                  - entity: sensor.humidity_mean
+                    name: <RH>
+                    color: rgba(241,196,15)
+                  - entity: sensor.office_humidity
+                    name: Office
+                    color: '#e74c3c' 
+                  - entity: sensor.tobis_bedroom_humidity
+                    name: Tobi's Room
+                    color: '#aaffc3'
+                  - entity: sensor.gameroom_humidity
+                    name: Game Room 
+                    color: '#ffd8b1'
+                  - entity: sensor.living_room_humidity
+                    name: Living Room 
+                    color: rgba(106,90,205)
+                  - entity: sensor.laundry_room_humidity
+                    name: Laundry Room
+                    color: rgba(255,255,255)
+                  - entity: binary_sensor.night
+                    color: rgba(255,255,255)
+                    y_axis: secondary
+                    show_state: false
+                    show_legend: false
+                    show_line: false
+                    show_points: false
+                state_map:
+                  - value: "off"
+                    label: "Day"
+                  - value: "on"
+                    label: "Night"
+
+          # Heat Pump thermostat -------------------------------------------
+          - type: thermostat
+            entity: climate.heat_pump
+            name: Heat Pump
+               
+          - break

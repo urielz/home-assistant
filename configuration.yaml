@@ -1,0 +1,121 @@
+# Home Assistant Configuration - Uriel Zajaczkovski
+# 2020-Dec-03: Initial setup
+# 2021-Jan-26: Switch to YAML mode (lovelace GUI is a mess and lacks functionality)
+# 2021-May-16: Started from scratch, mayor changes: 
+#              - Improved speed and stability: migrate Debian to SSD
+#              - Variables to store in db need to be explicity add
+
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+lovelace:
+  mode: yaml
+  resources:
+    
+    # BHA Icons (HACS): https://github.com/hulkhaugen/hass-bha-icons
+    - {type: module, url: 'local/community/hass-bha-icons/hass-bha-icons.js'}
+
+    # layout-card (HACS) - https://github.com/thomasloven/lovelace-layout-card
+    - {type: module, url: '/local/community/lovelace-layout-card/layout-card.js'}
+
+    # mini-graph-card (HACS): https://github.com/kalkih/mini-graph-card
+    - {type: module, url: '/local/community/mini-graph-card/mini-graph-card-bundle.js?v=0.10.0'}
+
+    # mini-media-player (HACS): https://github.com/kalkih/mini-media-player
+    - {type: module, url: '/local/community/mini-media-player/mini-media-player-bundle.js'}
+  
+    # Custom Components - Dependencies -------------------------------------------------------------
+  
+    # card-mod (HACS) - https://github.com/thomasloven/lovelace-card-mod
+    # upstream: lovelace UI
+    - {type: module, url: '/local/community/lovelace-card-mod/card-mod.js'}
+
+    # button-card (HACS): https://github.com/custom-cards/button-card
+    # upstream: lovelace UI
+    - {type: module, url: '/local/community/button-card/button-card.js'}    
+
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+binary_sensor: !include binary_sensors.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensors.yaml
+utility_meter: !include utility_meters.yaml
+input_number: !include input_number.yaml
+
+# Recorder Integration - Configure which integrations should be included in recordings
+# If set, all other entities not explicitly stated here are ignored
+# Reference: https://www.home-assistant.io/integrations/recorder/
+recorder:
+  include:
+    entity_globs:
+      - sensor.office_*
+      - sensor.tobis_*
+      - sensor.living_*
+      - sensor.gameroom_*
+      - sensor.laundry_*
+      - sensor.sonoff_media1_*
+      - sensor.sonoff_freezer_*
+      - sensor.sonoff_washer_*
+    entities:
+      - sensor.temperature_mean
+      - sensor.humidity_mean
+      - binary_sensor.night
+      - switch.sonoff_frontdoor
+      - switch.sonoff_freezer
+      - switch.sonoff_humidifier
+
+# InfluxDB database
+# Reference: https://www.home-assistant.io/integrations/influxdb/
+influxdb:
+  host: a0d7b954-influxdb
+  port: 8086
+  database: homeassistant
+  username: !secret influxdb_username
+  password: !secret influxdb_password
+  max_retries: 3
+  default_measurement: state
+  include:
+    entity_globs:
+      - sensor.office_*
+      - sensor.tobis_*
+      - sensor.living_*
+      - sensor.gameroom_*
+      - sensor.laundry_*
+      - sensor.sonoff_media1_*
+      - sensor.sonoff_freezer_*
+      - sensor.sonoff_washer_*
+    entities:
+      - sensor.temperature_mean
+      - sensor.humidity_mean
+      - switch.sonoff_frontdoor
+      - switch.sonoff_freezer
+      - switch.sonoff_humidifier
+
+# Climate Integration - Control and monitor HVAC devices and thermostats
+# Reference: https://www.home-assistant.io/integrations/climate/
+climate:
+  - platform: fujitsu_general_heatpump
+    username: !secret climate_username
+    password: !secret climate_password
+    tokenpath: 'token.txt'
+
+# sonoff devices local mode: https://github.com/AlexxIT/SonoffLAN
+sonoff:
+  username: !secret ewelink_username
+  password: !secret ewelink_password
+  # not sure if line below this is necessary, see: https://github.com/AlexxIT/SonoffLAN/issues/14
+  force_update: [power] 
+  scan_interval: '00:02:00'  # (optional) default 5 minutes
+  # Temperature and power sensors are not created by default:
+  sensors: [power, current, voltage]
+  #devices:
+  #  1000c4ed2f:
+  #    device_class: Power Outlet
+  #    name: Humidifier

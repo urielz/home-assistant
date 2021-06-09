@@ -1,0 +1,3 @@
+title: Bellevue House
+views:
+  - !include 'ui-lovelace_main.yaml'
